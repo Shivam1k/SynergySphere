@@ -1,27 +1,191 @@
+import React, { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import { Layout } from "@/components/Layout";
+import { LoginPage } from "@/components/auth/LoginPage";
+import { SignUpPage } from "@/components/auth/SignUpPage";
+import { ProjectDashboard } from "@/components/dashboard/ProjectDashboard";
+import { ProjectDetailView } from "@/components/projects/ProjectDetailView";
+import { TaskCreateModal } from "@/components/tasks/TaskCreateModal";
+import { TaskDetailView } from "@/components/tasks/TaskDetailView";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  progress: number;
+  totalTasks: number;
+  completedTasks: number;
+  teamSize: number;
+  dueDate: string;
+  status: 'active' | 'completed' | 'overdue';
+  color: string;
+}
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: 'todo' | 'progress' | 'done';
+  priority: 'low' | 'medium' | 'high';
+  assignee: {
+    name: string;
+    avatar?: string;
+  };
+  dueDate: string;
+  createdAt: string;
+}
+
+type AppView = 'login' | 'signup' | 'dashboard' | 'project' | 'task';
+
+const App = () => {
+  const [currentView, setCurrentView] = useState<AppView>('login');
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isTaskCreateModalOpen, setIsTaskCreateModalOpen] = useState(false);
+
+  const handleLogin = (email: string) => {
+    const user = {
+      id: '1',
+      name: email.split('@')[0].replace(/[^a-zA-Z\s]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      email: email
+    };
+    setCurrentUser(user);
+    setCurrentView('dashboard');
+  };
+
+  const handleSignUp = (email: string, name: string) => {
+    const user = {
+      id: '1',
+      name: name,
+      email: email
+    };
+    setCurrentUser(user);
+    setCurrentView('dashboard');
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setCurrentView('login');
+    setSelectedProject(null);
+    setSelectedTask(null);
+  };
+
+  const handleSelectProject = (project: Project) => {
+    setSelectedProject(project);
+    setCurrentView('project');
+  };
+
+  const handleBackToDashboard = () => {
+    setSelectedProject(null);
+    setCurrentView('dashboard');
+  };
+
+  const handleCreateProject = () => {
+    // This would typically open a project creation modal
+    console.log('Create project functionality would be implemented here');
+  };
+
+  const handleCreateTask = () => {
+    setIsTaskCreateModalOpen(true);
+  };
+
+  const handleSelectTask = (task: Task) => {
+    setSelectedTask(task);
+    setCurrentView('task');
+  };
+
+  const handleBackToProject = () => {
+    setSelectedTask(null);
+    setCurrentView('project');
+  };
+
+  const handleTaskCreated = (newTask: Task) => {
+    // This would typically update the project's task list
+    console.log('New task created:', newTask);
+  };
+
+  const handleTaskUpdated = (updatedTask: Task) => {
+    // This would typically update the task in the project's task list
+    console.log('Task updated:', updatedTask);
+  };
+
+  const renderCurrentView = () => {
+    if (!currentUser) {
+      return isSignUp ? (
+        <SignUpPage 
+          onSignUp={handleSignUp}
+          onToggleAuth={() => setIsSignUp(false)}
+        />
+      ) : (
+        <LoginPage 
+          onLogin={handleLogin}
+          onToggleAuth={() => setIsSignUp(true)}
+        />
+      );
+    }
+
+    switch (currentView) {
+      case 'dashboard':
+        return (
+          <ProjectDashboard
+            user={currentUser}
+            onSelectProject={handleSelectProject}
+            onLogout={handleLogout}
+            onCreateProject={handleCreateProject}
+          />
+        );
+      case 'project':
+        return selectedProject ? (
+          <ProjectDetailView
+            project={selectedProject}
+            onBack={handleBackToDashboard}
+            onCreateTask={handleCreateTask}
+            onSelectTask={handleSelectTask}
+          />
+        ) : null;
+      case 'task':
+        return selectedTask ? (
+          <TaskDetailView
+            task={selectedTask}
+            onBack={handleBackToProject}
+            onUpdateTask={handleTaskUpdated}
+          />
+        ) : null;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Layout>
+          {renderCurrentView()}
+          
+          <TaskCreateModal
+            open={isTaskCreateModalOpen}
+            onOpenChange={setIsTaskCreateModalOpen}
+            onCreateTask={handleTaskCreated}
+          />
+        </Layout>
+        <Toaster />
+        <Sonner />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
