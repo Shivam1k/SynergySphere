@@ -16,6 +16,7 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 interface Task {
   id: string;
@@ -159,6 +160,7 @@ export const TaskDetailView = ({ task, onBack, onUpdateTask }: TaskDetailViewPro
             </div>
             
             <div className="flex items-center space-x-2">
+              <ThemeToggle />
               {!isEditing ? (
                 <Button 
                   variant="outline" 

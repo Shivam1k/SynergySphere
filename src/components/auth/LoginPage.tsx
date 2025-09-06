@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Zap, Mail, Lock } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 interface LoginPageProps {
   onLogin: (email: string) => void;
@@ -41,7 +42,10 @@ export const LoginPage = ({ onLogin, onToggleAuth }: LoginPageProps) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 gradient-subtle">
+    <div className="min-h-screen flex items-center justify-center p-4 gradient-subtle relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <Card className="w-full max-w-md shadow-elegant">
         <CardHeader className="text-center space-y-4">
           <div className="flex items-center justify-center space-x-2">

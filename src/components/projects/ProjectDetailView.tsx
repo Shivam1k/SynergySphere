@@ -10,6 +10,7 @@ import {
   CheckCircle, Clock, AlertCircle, Filter, MoreVertical 
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 interface Task {
   id: string;
@@ -187,6 +188,7 @@ export const ProjectDetailView = ({ project, onBack, onCreateTask, onSelectTask 
             </div>
             
             <div className="flex items-center space-x-2">
+              <ThemeToggle />
               <Badge className={`${getStatusBadge(project.status.replace('active', 'progress'))} capitalize`}>
                 {project.status}
               </Badge>

@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { Layout } from "@/components/Layout";
 import { LoginPage } from "@/components/auth/LoginPage";
 import { SignUpPage } from "@/components/auth/SignUpPage";
@@ -171,19 +172,21 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Layout>
-          {renderCurrentView()}
-          
-          <TaskCreateModal
-            open={isTaskCreateModalOpen}
-            onOpenChange={setIsTaskCreateModalOpen}
-            onCreateTask={handleTaskCreated}
-          />
-        </Layout>
-        <Toaster />
-        <Sonner />
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="system" storageKey="synergysphere-ui-theme">
+        <TooltipProvider>
+          <Layout>
+            {renderCurrentView()}
+            
+            <TaskCreateModal
+              open={isTaskCreateModalOpen}
+              onOpenChange={setIsTaskCreateModalOpen}
+              onCreateTask={handleTaskCreated}
+            />
+          </Layout>
+          <Toaster />
+          <Sonner />
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

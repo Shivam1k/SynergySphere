@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Users, Calendar, CheckCircle, Clock, AlertCircle, Search, Bell, Settings, LogOut } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 interface User {
   id: string;
@@ -156,6 +157,8 @@ export const ProjectDashboard = ({ user, onSelectProject, onLogout, onCreateProj
                 <Bell className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full"></span>
               </Button>
+              
+              <ThemeToggle />
               
               <div className="flex items-center space-x-3">
                 <Avatar>
