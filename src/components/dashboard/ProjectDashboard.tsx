@@ -199,7 +199,7 @@ export const ProjectDashboard = ({ user, projects, onSelectProject, onLogout, on
               
               <ThemeToggle />
               
-              <div className="flex items-center space-x-3">
+              {/* <div className="flex items-center space-x-3">
                 <Avatar>
                   <AvatarFallback>
                     {user.name.split(' ').map(n => n[0]).join('')}
@@ -217,7 +217,7 @@ export const ProjectDashboard = ({ user, projects, onSelectProject, onLogout, on
               
               <Button variant="ghost" size="icon" onClick={onLogout}>
                 <LogOut className="h-5 w-5" />
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
