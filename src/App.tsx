@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
@@ -11,6 +10,7 @@ import { ProjectDashboard } from "@/components/dashboard/ProjectDashboard";
 import { ProjectDetailView } from "@/components/projects/ProjectDetailView";
 import { TaskCreateModal } from "@/components/tasks/TaskCreateModal";
 import { TaskDetailView } from "@/components/tasks/TaskDetailView";
+import { CreateProjectPage } from "@/pages/CreateProjectPage";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +56,7 @@ const App = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isTaskCreateModalOpen, setIsTaskCreateModalOpen] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const handleLogin = (email: string) => {
     const user = {
@@ -68,11 +69,7 @@ const App = () => {
   };
 
   const handleSignUp = (email: string, name: string) => {
-    const user = {
-      id: '1',
-      name: name,
-      email: email
-    };
+    const user = { id: '1', name, email };
     setCurrentUser(user);
     setCurrentView('dashboard');
   };
@@ -95,8 +92,7 @@ const App = () => {
   };
 
   const handleCreateProject = () => {
-    // This would typically open a project creation modal
-    console.log('Create project functionality would be implemented here');
+    setShowCreateForm(true);
   };
 
   const handleCreateTask = () => {
@@ -114,12 +110,11 @@ const App = () => {
   };
 
   const handleTaskCreated = (newTask: Task) => {
-    // This would typically update the project's task list
     console.log('New task created:', newTask);
+    setIsTaskCreateModalOpen(false);
   };
 
   const handleTaskUpdated = (updatedTask: Task) => {
-    // This would typically update the task in the project's task list
     console.log('Task updated:', updatedTask);
   };
 
@@ -129,7 +124,6 @@ const App = () => {
       setSelectedProject(null);
       setSelectedTask(null);
     } else if (view === 'profile' || view === 'settings') {
-      // These could be implemented as additional views
       console.log(`Navigate to ${view} - to be implemented`);
     }
   };
@@ -137,14 +131,20 @@ const App = () => {
   const renderCurrentView = () => {
     if (!currentUser) {
       return isSignUp ? (
-        <SignUpPage 
-          onSignUp={handleSignUp}
-          onToggleAuth={() => setIsSignUp(false)}
-        />
+        <SignUpPage onSignUp={handleSignUp} onToggleAuth={() => setIsSignUp(false)} />
       ) : (
-        <LoginPage 
-          onLogin={handleLogin}
-          onToggleAuth={() => setIsSignUp(true)}
+        <LoginPage onLogin={handleLogin} onToggleAuth={() => setIsSignUp(true)} />
+      );
+    }
+
+    if (showCreateForm) {
+      return (
+        <CreateProjectPage
+          onProjectCreated={(data) => {
+            console.log("Project created:", data);
+            setShowCreateForm(false);
+          }}
+          onCancel={() => setShowCreateForm(false)}
         />
       );
     }
@@ -166,6 +166,7 @@ const App = () => {
             onBack={handleBackToDashboard}
             onCreateTask={handleCreateTask}
             onSelectTask={handleSelectTask}
+            onNavigateToProjects={handleBackToDashboard}
           />
         ) : null;
       case 'task':
@@ -193,7 +194,7 @@ const App = () => {
             showSidebar={!!currentUser}
           >
             {renderCurrentView()}
-            
+
             <TaskCreateModal
               open={isTaskCreateModalOpen}
               onOpenChange={setIsTaskCreateModalOpen}
@@ -201,7 +202,6 @@ const App = () => {
             />
           </Layout>
           <Toaster />
-          <Sonner />
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
