@@ -123,6 +123,17 @@ const App = () => {
     console.log('Task updated:', updatedTask);
   };
 
+  const handleNavigate = (view: string) => {
+    if (view === 'dashboard') {
+      setCurrentView('dashboard');
+      setSelectedProject(null);
+      setSelectedTask(null);
+    } else if (view === 'profile' || view === 'settings') {
+      // These could be implemented as additional views
+      console.log(`Navigate to ${view} - to be implemented`);
+    }
+  };
+
   const renderCurrentView = () => {
     if (!currentUser) {
       return isSignUp ? (
@@ -174,7 +185,13 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system" storageKey="synergysphere-ui-theme">
         <TooltipProvider>
-          <Layout>
+          <Layout
+            user={currentUser}
+            currentView={currentView}
+            onNavigate={handleNavigate}
+            onLogout={handleLogout}
+            showSidebar={!!currentUser}
+          >
             {renderCurrentView()}
             
             <TaskCreateModal
